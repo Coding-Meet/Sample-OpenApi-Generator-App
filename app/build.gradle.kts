@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.openapi.generator)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -59,6 +62,15 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.core)
+    implementation(libs.ktor.json)
+    implementation(libs.ktor.logging)
+    implementation(libs.ktor.negotiation)
+    implementation(libs.kotlinx.serialization.json)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,4 +78,33 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+openApiGenerate {
+    skipValidateSpec.set(true)
+    inputSpec.set("$rootDir/openapi/json-placeholder-api.yaml")
+    generatorName.set("kotlin")
+    library.set("jvm-ktor")
+    packageName.set("com.coding.meet.sampleopenapiapp")
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    configOptions.set(
+        mapOf(
+            "useCoroutines" to "true",
+            "serializationLibrary" to "kotlinx_serialization"
+        )
+    )
+
+}
+
+kotlin{
+    sourceSets {
+        main{
+            kotlin.srcDir("${layout.buildDirectory.get()}/generate-resources/main/src")
+        }
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    dependsOn("openApiGenerate")
 }
