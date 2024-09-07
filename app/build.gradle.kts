@@ -85,7 +85,7 @@ openApiGenerate {
     inputSpec.set("$rootDir/openapi/json-placeholder-api.yaml")
     generatorName.set("kotlin")
     library.set("jvm-ktor")
-    packageName.set("com.coding.meet.sampleopenapiapp")
+    packageName.set("com.coding.meet.sampleopenapiapp.code")
     generateApiTests.set(false)
     generateModelTests.set(false)
     configOptions.set(
@@ -96,7 +96,8 @@ openApiGenerate {
     )
 
 }
-
+// Configure the android source set to include the generated sources
+// Start: Uncomment this block if you are directly using generated files in android module.
 kotlin{
     sourceSets {
         main{
@@ -104,7 +105,25 @@ kotlin{
         }
     }
 }
+// End
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     dependsOn("openApiGenerate")
+}
+
+tasks.named("openApiGenerate") {
+    doLast {
+
+        // Start: Copy Operation: Copies the files from the generated android directory to the actual android source directory in your project.
+        // Define source and destination directories for copying generated files
+//        val sourceDir = file("${layout.buildDirectory.get()}/generate-resources/main/src/main/kotlin")
+//        val destinationDir = file("$projectDir/src/main/java") // Actual android directory
+//
+//        copy {
+//            from(sourceDir) // Source directory (generated)
+//            into(destinationDir) // Destination directory (actual android)
+//        }
+        // End
+
+    }
 }
